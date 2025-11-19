@@ -99,11 +99,10 @@ This dashboard give you some insights of the management and signal service. It's
 ## Relay Server
 ### Functionality
 
+#### How a relay server is picked when there are multiple configured?
 
 > Maycon Lopes (mlsmaycon)
->  Gestern um 11:35 Uhr
 > they are queried at the same time and the faster to respond will be used as local relay
-> 11:36 Uhr
 > every peer will have their local relay and when connecting to each other the relay used by the leader (the one with higher bytes for public key) will be used for communication
 
 ### Setup with nginx rproxy
