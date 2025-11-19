@@ -100,6 +100,8 @@ This dashboard give you some insights of the management and signal service. It's
 
 I set up the relay server behind a nginx rproxy. 
 
+This is my docker-compose service: 
+
 ```
 services:
     netbird-relay:
@@ -132,3 +134,5 @@ location ~* /relay {
     proxy_set_header X-Forwarded-Proto $scheme;
 }
 ```
+
+Setting the correct header varlues `X-Real-Ip` and `X-Real-Port` is neccessary for the relay to work. 
