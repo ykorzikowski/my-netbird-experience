@@ -96,7 +96,17 @@ This dashboard give you some insights of the management and signal service. It's
 * **Variables:** `Datasource`, `Job`, `Instance` to filter by environment / service / node.
 * **Time range:** Last 6 hours, auto-refresh every 30 seconds.
 
-## Setting up: Relay Server
+## Relay Server
+### Functionality
+
+
+> Maycon Lopes (mlsmaycon)
+>  Gestern um 11:35 Uhr
+> they are queried at the same time and the faster to respond will be used as local relay
+> 11:36 Uhr
+> every peer will have their local relay and when connecting to each other the relay used by the leader (the one with higher bytes for public key) will be used for communication
+
+### Setup with nginx rproxy
 
 I set up the relay server behind a nginx rproxy. 
 
@@ -135,4 +145,9 @@ location ~* /relay {
 }
 ```
 
-Setting the correct header varlues `X-Real-Ip` and `X-Real-Port` is neccessary for the relay to work. 
+Setting the correct header varlues `X-Real-Ip` and `X-Real-Port` is neccessary for the relay to work. See https://github.com/netbirdio/netbird/blob/v0.60.0/relay/server/listener/ws/listener.go#L112
+
+### Multiple relays
+
+If one relay goes down, it takes ~17s for restoring the connection with other being relays online. 
+
