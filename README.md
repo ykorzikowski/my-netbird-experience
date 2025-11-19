@@ -4,7 +4,6 @@ Hi there,
 
 I am using Netbird since Mid-2023 in a self hosted environment and want to share my experience. 
 
-
 ## Monitoring
 
 I designed some Dashboards with grafana. I used chatgpt for the base and then extended it. 
@@ -96,3 +95,40 @@ This dashboard give you some insights of the management and signal service. It's
 
 * **Variables:** `Datasource`, `Job`, `Instance` to filter by environment / service / node.
 * **Time range:** Last 6 hours, auto-refresh every 30 seconds.
+
+## Setting up: Relay Server
+
+I set up the relay server behind a nginx rproxy. 
+
+```
+services:
+    netbird-relay:
+        image: netbirdio/relay:{{ software_version.netbird.relay }}
+        restart: unless-stopped
+        environment:
+            NB_AUTH_SECRET: <secret>
+            NB_LOG_LEVEL: info
+            NB_LISTEN_ADDRESS: ":33080"
+            NB_EXPOSED_ADDRESS: "rels://relay.your.tld:443/relay"
+        ports:
+            - 33080:33080
+            - 9090:9090 # metrics
+        logging: "{{ docker_loki_logging }}"
+```
+
+This is my nginx snippet for rproxying the relay:
+
+```
+location ~* /relay {
+    proxy_http_version 1.1;
+    proxy_pass http://127.0.0.1:33080;
+
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection upgrade;
+    proxy_read_timeout 86400;
+    proxy_set_header X-Real-Ip $remote_addr;
+    proxy_set_header X-Real-Port $remote_port;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
